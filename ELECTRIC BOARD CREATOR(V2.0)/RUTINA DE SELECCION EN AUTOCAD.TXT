@@ -1,0 +1,98 @@
+http://jixie.usst.edu.cn/jixie/courseware/CAD/cadjs/unit7/chailiao/1.0VBADEVDim cubrir, fin As Integer
+     Dim cubrir, fin As Integer
+        cubrir = 0
+        fin = 0
+        objautocad = GetObject(, "autocad.application")
+
+        '  Do While (fin <> -1)
+        ' Dim selection As Autodesk.AutoCAD.Interop.Common.AcSelect
+        'selection = Autodesk.AutoCAD.Interop.Common.AcSelect.acSelectionSetAll
+
+        Dim line As Autodesk.AutoCAD.Interop.Common.AcadLine
+        Dim inicio(2), final(2) As Double
+
+        inicio(0) = 500 : inicio(1) = 100 : inicio(2) = 0
+        final(0) = 500 : final(1) = 600 : final(2) = 0
+        line = objautocad.ActiveDocument.ModelSpace.AddLine(inicio, final)
+
+        Dim arcdim As Autodesk.AutoCAD.Interop.Common.AcDimArcLengthSymbol
+
+
+        Dim distan
+        Dim layer As Autodesk.AutoCAD.Interop.Common.AcadLayer ' PARA CREAR OBJETOS DE CAPAS LAYER
+        Dim s As Autodesk.AutoCAD.Interop.AcadSelectionSet
+        Dim entra As Autodesk.AutoCAD.Interop.Common.AcadEntity
+
+        Dim FilterType(0) As Short
+        Dim FilterData(0) As Object
+
+        'borra el que se creo( NOTA: no utilizar al principio de ejecucion del este codigo)
+        objautocad.ActiveDocument.SelectionSets.Item("select").Delete()
+        'se adita
+
+        s = objautocad.ActiveDocument.SelectionSets.Add("select") 'con este creo varios tipos de seleccion.. con distintos nombres
+        's = objautocad.ActiveDocument.SelectionSets.Item("select") ' se coloca item para ser universal.. 
+
+        'para saber q figura es la q se va a buscar
+
+        'para saber el objeto q se quiere seleccionar creado por el usuario
+        'FilterType(0) = 2 ' codiigo
+        'FilterData(0) = "toma"
+
+        'para saber q color es la figura
+        ' FilterType(1) = 62 'codigo
+        'FilterData(1) = 5
+
+        'para saber en que capa esta
+        ' FilterType(2) = 8 'codigo
+        ' FilterData(2) = "0"
+
+        '/////////////////////////////////////
+        'FilterType(0) = -4 'codigo
+        'FilterData(0) = "<or"
+
+        FilterType(0) = 0
+        FilterData(0) = "arc"
+
+        'FilterType(2) = 0
+        'FilterData(2) = "line"
+
+        'FilterType(4) = -4
+        'FilterData(4) = "or>"
+
+
+        'y con estas otra instruccion me permite selecionarlo manualmete segun laslineas q le pedi
+        's.SelectOnScreen(FilterType, FilterData)
+
+        'con esto me selecciona automaticamente  todas los objetos q le pedi que selecionara
+        s.Select(Autodesk.AutoCAD.Interop.Common.AcSelect.acSelectionSetAll, , , FilterType, FilterData)
+
+        'for especial enel cual utiliza la sintaxis FOR EACH (por cada..) entra (variable declarada como un common entidad) 
+        's (seleccionada) hara una modificacion x q se quiera realizar
+
+        'For Each entra In s
+        'entra.color = Autodesk.AutoCAD.Interop.Common.ACAD_COLOR.acBlue
+        '' entra.Update()
+
+        ' Next
+        Dim oArc As Autodesk.AutoCAD.Interop.Common.AcadArc
+        Dim acumulador
+        acumulador = 0
+        For Each oArc In s 'For each arc show the X and Y Coordinates
+            'forma mas facil
+            MsgBox(oArc.ArcLength)
+            acumulador = oArc.ArcLength + acumulador
+            'With oArc
+            '   MsgBox("StartPoint: " & .ArcLength & ", ") ' jugar con esta instruccion en msgbox ya encontre el metodo para saber cuanto mide el arco
+            'End With
+            'oArc.color = Autodesk.AutoCAD.Interop.Common.ACAD_COLOR.acBlue
+        Next
+
+        MsgBox("total: " & acumulador, MsgBoxStyle.Information)
+
+
+        ' MsgBox("nombre: " & s.Name & " cantidad: " & s.Count, MsgBoxStyle.Information)
+                'distan = objautocad.ActiveDocument.Utility.
+                ' MsgBox(distan)
+
+                'layer = objautocad.ActiveDocument.Layers.Add("ALFREDO") 'PARA CREAR UN LAYER (CAPA)
